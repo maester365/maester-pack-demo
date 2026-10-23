@@ -10,10 +10,11 @@ from Microsoft Graph.
 
 ```powershell
 Install-MtPack maester365/maester-pack-demo
-Invoke-Maester -Pack DEMO
+Invoke-Maester -Pack DEMO -SkipBuiltIn
 ```
 
-`-Pack DEMO` runs only this pack, including its long-running test. Run it in a console that is large enough for
+To confirm the install, type the pack's code, `DEMO`. `-Pack DEMO` runs this pack, including its long-running
+test, and `-SkipBuiltIn` leaves out Maester's own tests. Run it in a console that is large enough for
 the full-screen dashboard to see the live progress of MP.DEMO.1008. To run the pack's connector test
 (MP.DEMO.1006) instead of skipping it, connect its made-up service first:
 
