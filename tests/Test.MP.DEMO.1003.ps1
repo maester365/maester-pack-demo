@@ -4,9 +4,13 @@ function Test-DemoInvestigate {
     A test whose result needs a person to look at it.
     #>
     [MaesterTest(
-        Id       = 'MP.DEMO.1003',
-        Title    = 'Demo: a result to investigate',
-        Severity = 'Medium'
+        Id           = 'MP.DEMO.1003',
+        Title        = 'Demo: a result to investigate',
+        Severity     = 'Medium',
+        Product      = 'Demo',
+        Feature      = 'results',
+        Area         = 'examples',
+        ResourceType = 'Tenant'
     )]
     [CmdletBinding()]
     [OutputType([bool])]

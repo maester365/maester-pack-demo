@@ -4,10 +4,14 @@ function Test-DemoGraphOrganization {
     Reads the tenant's organization from Microsoft Graph and passes when it has a display name.
     #>
     [MaesterTest(
-        Id       = 'MP.DEMO.1007',
-        Title    = 'Demo: read the tenant from Microsoft Graph',
-        Severity = 'Info',
-        Service  = 'Graph'
+        Id           = 'MP.DEMO.1007',
+        Title        = 'Demo: read the tenant from Microsoft Graph',
+        Severity     = 'Info',
+        Product      = 'entra',
+        Feature      = 'tenant',
+        Area         = 'configuration',
+        ResourceType = 'Tenant',
+        Service      = 'Graph'
     )]
     [CmdletBinding()]
     [OutputType([bool])]

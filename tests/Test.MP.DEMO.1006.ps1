@@ -4,10 +4,14 @@ function Test-DemoSampleMfaRequired {
     Checks that the demo sample service requires MFA. Needs Connect-Maester -Service DEMO.Sample.
     #>
     [MaesterTest(
-        Id       = 'MP.DEMO.1006',
-        Title    = 'Demo: the sample service requires MFA',
-        Severity = 'High',
-        Service  = 'DEMO.Sample'
+        Id           = 'MP.DEMO.1006',
+        Title        = 'Demo: the sample service requires MFA',
+        Severity     = 'High',
+        Product      = 'Demo sample service',
+        Feature      = 'authentication',
+        Area         = 'authentication',
+        ResourceType = 'Tenant',
+        Service      = 'DEMO.Sample'
     )]
     [CmdletBinding()]
     [OutputType([bool])]

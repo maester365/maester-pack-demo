@@ -4,9 +4,13 @@ function Test-DemoSkipped {
     A test that skips itself with a reason of its own.
     #>
     [MaesterTest(
-        Id       = 'MP.DEMO.1004',
-        Title    = 'Demo: a test that skips itself',
-        Severity = 'Low'
+        Id           = 'MP.DEMO.1004',
+        Title        = 'Demo: a test that skips itself',
+        Severity     = 'Low',
+        Product      = 'Demo',
+        Feature      = 'results',
+        Area         = 'examples',
+        ResourceType = 'Tenant'
     )]
     [CmdletBinding()]
     [OutputType([bool])]
