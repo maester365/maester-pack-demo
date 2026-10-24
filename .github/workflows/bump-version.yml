@@ -8,6 +8,9 @@
 # A push made with the workflow's token starts no other workflow, so the pack check would never run on the new
 # commit. This workflow runs it (check-pack.yml) on that commit and reports the result as the "check" the ruleset
 # requires. It runs for branches of this repository only; a pull request from a fork is raised by hand.
+#
+# It runs only when the repository variable PACK_RELEASES is true, with release.yml. Without it the pack has no
+# releases and Install-MtPack installs the default branch. See "Versions and releases" in README.md.
 name: Bump version
 
 on:
@@ -20,6 +23,7 @@ concurrency:
 jobs:
   bump:
     if: >-
+      vars.PACK_RELEASES == 'true' &&
       github.event.pull_request.base.ref == 'main' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       !github.event.pull_request.draft
