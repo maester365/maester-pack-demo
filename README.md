@@ -173,7 +173,8 @@ release with that version's changelog section as its notes. A pull request label
 version, so its merge publishes nothing. To publish the version already on `main`, run the Release workflow by
 hand from the Actions tab. `Install-MtPack` offers a new release once it is older than the install cooldown.
 
-This repository publishes releases this way.
+This repository tracks its default branch: `PACK_RELEASES` is not set, so the two workflows do nothing here and
+`Install-MtPack maester365/maester-pack-demo` installs `main`. `Version` in `maester-pack.json` is raised by hand.
 
 ## Files
 
