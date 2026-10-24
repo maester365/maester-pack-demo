@@ -2,7 +2,7 @@
 
 Every release of the pack, newest first. Install-MtPack shows the version; Update-MtPack moves to a newer one.
 
-## Unreleased
+## 1.1.0
 
 - MP.DEMO.1008's report, now **Demo pack insights**, shows what the results cannot instead of listing the checks
   again: stat tiles with trends and charts drawn with Chart.js (inline), a heatmap and a ranked list, each with a

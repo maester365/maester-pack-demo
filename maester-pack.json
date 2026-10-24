@@ -4,7 +4,7 @@
   "Guid": "1ee323d7-1d0c-498e-985c-081875c72dac",
   "Name": "Maester demo pack",
   "Description": "The pack to copy when you write your own: a test for each result, a setting, a family, its own connector, a Microsoft Graph read, live progress and its own report in the Maester report.",
-  "Version": "1.0.0",
+  "Version": "1.1.0",
   "Publisher": "maester365",
   "License": "MIT",
   "Homepage": "https://github.com/maester365/maester-pack-demo",
