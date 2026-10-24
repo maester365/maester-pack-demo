@@ -13,7 +13,8 @@ function Test-DemoLongRunning {
       running and finished with their times, and the errors. While the checks run, -Results and -Groups make
       the dashboard's Results panel, result blocks and product list show the checks' results by area, and
       the times of the finished items go into the Pace graph and the Slowest panel.
-    - Add-MtReportAttachment adds the HTML report to the Maester report, under Reports in its left menu.
+    - Add-MtReportAttachment adds the HTML report to the Maester report, under Reports in its left menu. The
+      report is a gallery of chart ideas (Chart.js, inline) for insights that pass and fail cannot show.
 
     A tool that runs in another process does the same by writing ##maester[progress] lines to its output, which
     is piped to Write-MtTestOutput.
@@ -45,6 +46,8 @@ function Test-DemoLongRunning {
 
     # Stage 1: collect the data, one item at a time. Each finished item is listed with its result and time.
     $kinds = 'Users', 'Groups', 'Devices', 'Applications', 'Policies', 'Sites'
+    $counts = @{ Users = 1284; Groups = 214; Devices = 0; Applications = 9; Policies = 37; Sites = 58 }
+    $collection = [System.Collections.Generic.List[object]]::new()
     for ($i = 0; $i -lt $kinds.Count; $i++) {
         $kind = $kinds[$i]
         $running = @{ Id = $kind; Title = "Collecting $kind"; Status = 'Running'; Detail = 'Reading page 1'; Seconds = 0 }
@@ -61,6 +64,7 @@ function Test-DemoLongRunning {
             Write-MtTestOutput "Collected ${kind}."
             $finished.Insert(0, @{ Id = $kind; Title = "Collecting $kind"; Status = 'Passed'; Seconds = $clock.Elapsed.TotalSeconds })
         }
+        $collection.Add([pscustomobject]@{ Name = $kind; Items = $counts[$kind]; Seconds = $clock.Elapsed.TotalSeconds; Status = $finished[0].Status })
     }
 
     # Stage 2: run the tool's own checks, and show their results by area in the dashboard.
@@ -99,13 +103,15 @@ function Test-DemoLongRunning {
         Write-MtTestOutput "$($check.Title): $($check.Result)"
     }
 
-    # Stage 3: write the tool's report and add it to the Maester report.
+    # Stage 3: write the tool's report and add it to the Maester report. The report shows what the results
+    # cannot (spread, trends, outliers, the run itself), not the checks again: see assets/insights-report.html.
     Write-MtTestProgress -Stages $stages -StageNumber 3 -Stage 'Writing the report' -Completed 0 -Total 1 -Running 1
     Write-MtTestOutput 'Writing the HTML report'
-    Add-MtReportAttachment -Name 'Demo pack report' -Content (Get-DemoReportHtml -Check $checks)
+    $insights = Get-DemoInsightData -Collection $collection
+    Add-MtReportAttachment -Name 'Demo pack insights' -Content (Get-DemoReportHtml -Data $insights)
     Write-MtTestOutput -Complete
 
     $failed = @($checks | Where-Object Result -EQ 'Failed').Count
-    Add-MtTestResultDetail -Result "Collected $($kinds.Count) kinds of data (one failed on purpose) and ran $($checks.Count) checks: $failed failed. Open **Demo pack report** under **Reports** in the left menu of this report."
+    Add-MtTestResultDetail -Result "Collected $($kinds.Count) kinds of data (one failed on purpose) and ran $($checks.Count) checks: $failed failed. Open **Demo pack insights** under **Reports** in the left menu of this report."
     $true
 }

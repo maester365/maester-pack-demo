@@ -33,7 +33,7 @@ Connect-Maester -Service DEMO.Sample -ServiceSetting @{ MfaRequired = $false }
 | MP.DEMO.1005 | An Error result from a test that throws |
 | MP.DEMO.1006 | The pack's own connector for a made-up service (`DEMO.Sample`), and the skip when it is not connected |
 | MP.DEMO.1007 | A Microsoft Graph read, declared in the manifest |
-| MP.DEMO.1008 | A long-running test: live output and progress in the dashboard, and its own report in the Maester report |
+| MP.DEMO.1008 | A long-running test: live output and progress in the dashboard, and its own report of charts in the Maester report |
 | MP.DEMO.1009 | A family: one result per object (three made-up apps) |
 
 Change a setting in your `maester-config.json`:
@@ -120,7 +120,9 @@ These links point at the docs for the next Maester version, which has packs.
   by group. A tool in another process writes `##maester[progress]` lines instead (MP.DEMO.1008).
 - **Add a tool's report to the Maester report.** `Add-MtReportAttachment` puts a single-file HTML report under
   **Reports** in the report's left menu. It runs in a sandboxed frame, so keep it to one file with everything
-  inline, and HTML-encode values from the tenant (`helpers/Get-DemoReportHtml.ps1`).
+  inline, and keep values from the tenant out of the markup (`helpers/Get-DemoReportHtml.ps1`). Use it for what
+  the results cannot show, such as trends, spread and outliers, not for the results again. The demo's report is
+  a gallery of chart ideas; see [Ideas for a pack's report](docs/report-ideas.md).
 - **Be easy to trust.** A licence, `Homepage`, `Support` and `SecurityContact` in the manifest, a
   [security policy](SECURITY.md), a [changelog](CHANGELOG.md), and a check on every pull request
   ([.github/workflows/check-pack.yml](.github/workflows/check-pack.yml)).
@@ -131,7 +133,10 @@ These links point at the docs for the next Maester version, which has packs.
 | --- | --- |
 | `maester-pack.json` | The manifest: ID, code, version, the suite, helpers, the connector and what the pack uses |
 | `tests/` | The suite: `suite.json`, and one `Test.<ID>.ps1` and `Test.<ID>.md` per test |
-| `helpers/` | Functions the tests call: the connector's settings and the HTML report |
+| `helpers/` | Functions the tests call: the connector's settings, and the data and HTML of the report |
 | `connector/` | `Connect-`, `Test-` and `Disconnect-DemoSample` for the made-up service |
 | `assets/banner.png` | The image the pack index shows when it features the pack |
+| `assets/insights-report.html` | The page of MP.DEMO.1008's report, with sample data so you can open it in a browser |
+| `assets/chart.js/` | Chart.js 4.5.1 and its MIT licence, put inline in the report |
+| `docs/report-ideas.md` | An optional guide: what a pack's report can show, and which chart library to use |
 | `tools/` | `Initialize-MtPackFromDemo`, which turns a copy into your own pack; delete the folder afterwards. The pack never loads it |
