@@ -2,7 +2,7 @@
 
 # Maester demo pack
 
-A [Maester Pack](https://maester.dev/docs/packs) to try packs out, and the one to copy when you write your own.
+A [Maester Pack](https://maester.dev/docs/next/packs) to try packs out, and the one to copy when you write your own.
 Every test uses made-up data and changes nothing. Only MP.DEMO.1007 reads your tenant: the organization's name,
 from Microsoft Graph.
 
@@ -63,7 +63,7 @@ Change a setting in your `maester-config.json`:
 3. Replace the made-up tests with your own. Keep the ones whose pattern you need (a family, a setting, a
    connector, a long-running test) and delete the rest.
 4. Replace `assets/banner.png`, or remove `Banner` from the manifest. See
-   [Banner image](https://maester.dev/docs/packs/writing-a-pack#banner-image).
+   [Banner image](https://maester.dev/docs/next/packs/writing-a-pack#banner-image).
 5. Check the pack and run its tests from the folder:
 
    ```powershell
@@ -75,7 +75,29 @@ Change a setting in your `maester-config.json`:
    with `Install-MtPack <owner>/<repository>`.
 
 To start from an empty pack instead, run `New-MtPack`. The full guide is
-[Writing a pack](https://maester.dev/docs/packs/writing-a-pack).
+[Writing a pack](https://maester.dev/docs/next/packs/writing-a-pack).
+
+## Learn how to write the tests
+
+A pack's tests are Maester native tests, so the guides for writing tests apply to them as they are. Read these
+before you write or change a test, whether you write it yourself or ask an AI agent to:
+
+- [Writing native tests](https://maester.dev/docs/next/writing-tests/): the `[MaesterTest]` attribute, the
+  `.md` file, what a test returns, `Service` and `License`, parameters, families and settings.
+- [Your first custom test](https://maester.dev/docs/next/writing-tests/first-custom-test): a short walk-through.
+- [Formatting test results](https://maester.dev/docs/next/writing-tests/formatting-test-results): tables,
+  remediation and how a result should read.
+- [Attribute rubric](https://maester.dev/docs/next/writing-tests/attribute-rubric): which `Product`, `Feature`,
+  `Area`, `Severity`, `UserImpact`, `ImplementationCost` and `Mitre` values to choose.
+- [Advanced guide](https://maester.dev/docs/next/writing-tests/advanced-concepts): caching, Graph requests and
+  other helpers.
+- [Writing a pack](https://maester.dev/docs/next/packs/writing-a-pack): the manifest, connectors, live output
+  and progress, report attachments and publishing.
+- [Pack security](https://maester.dev/docs/next/packs/security): what Maester checks when someone installs your
+  pack, and what makes it fail.
+- [Result schema](https://maester.dev/docs/next/result-schema): the fields of each result row.
+
+These links point at the docs for the next Maester version, which has packs.
 
 ## What this pack does that yours should too
 
