@@ -165,12 +165,13 @@ Then every pull request carries the next version. [bump-version.yml](.github/wor
 [CHANGELOG.md](CHANGELOG.md) into that version, and pushes that commit to the pull request (pull before you push
 to it again). The label picks the part to raise: `release:major`, `release:minor`, `release:patch` (the default,
 also when there is no label) or `release:none`; changing the label changes the version. Write what changed under
-`## Unreleased` as part of the pull request.
+`## Unreleased` as part of the pull request. A pull request from a fork gets no version commit: its author (or
+the maintainer, before merging) raises `Version` and the changelog heading by hand.
 
 Merging publishes the release. [release.yml](.github/workflows/release.yml) runs on each push to `main`, and when
 there is no release for the version in `maester-pack.json` yet, it tags the commit `v<Version>` and publishes a
 release with that version's changelog section as its notes. A pull request labelled `release:none` keeps the
-version, so its merge publishes nothing. To publish the version already on `main`, run the Release workflow by
+version, so its merge publishes nothing once that version has a release. To publish the version already on `main`, run the Release workflow by
 hand from the Actions tab. `Install-MtPack` offers a new release once it is older than the install cooldown.
 
 This repository tracks its default branch: `PACK_RELEASES` is not set, so the two workflows do nothing here and
