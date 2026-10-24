@@ -128,6 +128,26 @@ These links point at the docs for the next Maester version, which has packs.
   [security policy](SECURITY.md), a [changelog](CHANGELOG.md), and a check on every pull request
   ([.github/workflows/check-pack.yml](.github/workflows/check-pack.yml)).
 
+## How changes are made to this repository
+
+Once an admin applies the ruleset in [.github/rulesets/main.json](.github/rulesets/main.json) (the command is
+below), every change to `main` goes through a pull request, which must be up to date with `main`, have one
+approval, resolved conversations and a passing pack check, and is squash-merged. Force pushes and deleting `main`
+are blocked.
+
+When a maintainer approves a pull request, [bump-version.yml](.github/workflows/bump-version.yml) raises
+`Version` in `maester-pack.json` above the version on `main` and turns `## Unreleased` in the changelog into that
+version. If `main` moves on and the approved pull request is updated, it raises the version again. Pick the part to
+raise with a label on the pull request: `release:major`, `release:minor`, `release:patch` (the default) or
+`release:none`. Write what changed under `## Unreleased` in [CHANGELOG.md](CHANGELOG.md) as part of the pull
+request. Releases are still published by hand, from the merged version.
+
+To apply the ruleset to a copy of this repository, as an admin:
+
+```bash
+gh api --method POST repos/<owner>/<repository>/rulesets --input .github/rulesets/main.json
+```
+
 ## Files
 
 | Path | What it is |
