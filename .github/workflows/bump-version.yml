@@ -1,19 +1,20 @@
-# Raises the pack's version on a pull request when a maintainer approves it, so every merge to main is a new
-# release (see release.yml). The label on the pull request picks the part to raise:
+# Raises the pack's version on a pull request when a maintainer approves it, so every merge to main carries a new
+# version. The label on the pull request picks the part to raise:
 #   release:major, release:minor, release:patch (the default when there is no label), or release:none.
-# It changes Version in maester-pack.json and turns "## Unreleased" in CHANGELOG.md into the new version, then
-# starts the pack check again, because a push by this workflow does not start other workflows by itself.
-# It runs for branches of this repository only; a pull request from a fork is raised by hand.
+# It sets Version in maester-pack.json one step above the version on main, turns "## Unreleased" in CHANGELOG.md
+# into that version and pushes the commit to the pull request. When an approved pull request is updated (for
+# example after main moved on), it raises the version again if main has caught up with it.
+#
+# A push made with the workflow's token starts no other workflow, so the pack check would never run on the new
+# commit. This workflow runs it (check-pack.yml) on that commit and reports the result as the "check" the ruleset
+# requires. It runs for branches of this repository only; a pull request from a fork is raised by hand.
 name: Bump version on approval
 
 on:
   pull_request_review:
     types: [submitted]
-
-permissions:
-  contents: write
-  actions: write
-  pull-requests: read
+  pull_request:
+    types: [synchronize]
 
 concurrency:
   group: bump-version-${{ github.event.pull_request.number }}
@@ -21,10 +22,16 @@ concurrency:
 jobs:
   bump:
     if: >-
-      github.event.review.state == 'approved' &&
       github.event.pull_request.base.ref == 'main' &&
-      github.event.pull_request.head.repo.full_name == github.repository
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (github.event_name == 'pull_request' || github.event.review.state == 'approved')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    outputs:
+      sha: ${{ steps.bump.outputs.sha }}
+      version: ${{ steps.bump.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,9 +46,15 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          EVENT: ${{ github.event_name }}
         run: |
-          # Read the labels now, not from the event, so a label added after the approval still counts.
-          $labels = @(gh pr view $env:PR_NUMBER --json labels --jq '.labels[].name')
+          # Read the pull request now, not from the event, so a label added after the approval still counts.
+          $pr = gh pr view $env:PR_NUMBER --json labels,reviewDecision | ConvertFrom-Json
+          if ($env:EVENT -eq 'pull_request' -and $pr.reviewDecision -ne 'APPROVED') {
+            Write-Output 'The pull request is not approved yet: the version is raised when it is.'
+            return
+          }
+          $labels = @($pr.labels.name)
           if ($labels -contains 'release:none') {
             Write-Output 'The pull request has release:none: the version stays as it is.'
             return
@@ -52,8 +65,8 @@ jobs:
           $base = [version](git show origin/main:maester-pack.json | ConvertFrom-Json).Version
           $text = Get-Content -LiteralPath maester-pack.json -Raw
           $current = [version]($text | ConvertFrom-Json).Version
-          if ($current -ne $base) {
-            Write-Output "The version is already $current (main has $base): nothing to raise."
+          if ($current -gt $base) {
+            Write-Output "The version is already $current, above $base on main: nothing to raise."
             return
           }
           $next = switch ($part) {
@@ -84,12 +97,37 @@ jobs:
           git add maester-pack.json CHANGELOG.md
           git commit --quiet -m "Version $next"
           git push --quiet origin "HEAD:$($env:HEAD_REF)"
+          "sha=$(git rev-parse HEAD)" >> $env:GITHUB_OUTPUT
           "version=$next" >> $env:GITHUB_OUTPUT
-          "Raised the version from $base to **$next** ($part)." >> $env:GITHUB_STEP_SUMMARY
+          "Raised the version from $current to **$next** ($part; main has $base)." >> $env:GITHUB_STEP_SUMMARY
 
-      - name: Check the pack again
-        if: steps.bump.outputs.version != ''
+  validate:
+    needs: bump
+    if: needs.bump.outputs.sha != ''
+    permissions:
+      contents: read
+    uses: ./.github/workflows/check-pack.yml
+    with:
+      ref: ${{ needs.bump.outputs.sha }}
+
+  report:
+    needs: [bump, validate]
+    if: always() && needs.bump.outputs.sha != ''
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+    steps:
+      - name: Report the check on the new commit
         env:
           GH_TOKEN: ${{ github.token }}
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
-        run: gh workflow run check-pack.yml --ref "$HEAD_REF"
+          SHA: ${{ needs.bump.outputs.sha }}
+          VERSION: ${{ needs.bump.outputs.version }}
+          RESULT: ${{ needs.validate.result }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          conclusion=failure
+          if [ "$RESULT" = "success" ]; then conclusion=success; fi
+          gh api "repos/$GITHUB_REPOSITORY/check-runs" \
+            -f name=check -f head_sha="$SHA" -f status=completed -f conclusion="$conclusion" -f details_url="$RUN_URL" \
+            -f "output[title]=Pack check of version $VERSION: $RESULT" \
+            -f "output[summary]=The version commit was checked by the Bump version on approval run: $RUN_URL"
