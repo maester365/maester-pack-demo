@@ -96,6 +96,8 @@ td.n, th.n { text-align: right; }
 
 .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink-2); margin-bottom: 8px; }
 .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+.optional { margin: 16px 0 0; max-width: 760px; padding: 10px 14px; border: 1px solid var(--line); border-left: 4px solid var(--s1); border-radius: 8px; background: var(--card); color: var(--ink-2); font-size: 14px; }
+.optional b { color: var(--ink); }
 footer { margin-top: 32px; color: var(--muted); font-size: 12.5px; }
 </style>
 </head>
@@ -107,6 +109,9 @@ footer { margin-top: 32px; color: var(--muted); font-size: 12.5px; }
   a list of results cannot show: how much there is, how it is spread, how it changes from run to run, and where
   the outliers are. Each card below is one idea, with a note on why it is drawn that way.</p>
   <div class="meta" id="meta"></div>
+  <p class="optional"><b>A report is optional.</b> A Maester pack does not have to include one: its test results
+  already appear in the Maester report. This page only shows what you can add if your pack collects data worth
+  charting.</p>
 </header>
 
 <div class="section-title">At a glance</div>

@@ -118,8 +118,9 @@ These links point at the docs for the next Maester version, which has packs.
 - **Show long work while it runs.** A test that runs for more than a few seconds writes its log with
   `Write-MtTestOutput` and its progress with `Write-MtTestProgress`: stages, items, errors, and its own results
   by group. A tool in another process writes `##maester[progress]` lines instead (MP.DEMO.1008).
-- **Add a tool's report to the Maester report.** `Add-MtReportAttachment` puts a single-file HTML report under
-  **Reports** in the report's left menu. It runs in a sandboxed frame, so keep it to one file with everything
+- **Add a tool's report to the Maester report, if you want one.** This is optional: a pack does not have to
+  include a report, because its results already appear in the Maester report. `Add-MtReportAttachment` puts a
+  single-file HTML report under **Reports** in the report's left menu. It runs in a sandboxed frame, so keep it to one file with everything
   inline, and keep values from the tenant out of the markup (`helpers/Get-DemoReportHtml.ps1`). Use it for what
   the results cannot show, such as trends, spread and outliers, not for the results again. The demo's report is
   a gallery of chart ideas; see [Ideas for a pack's report](docs/report-ideas.md).
@@ -138,5 +139,5 @@ These links point at the docs for the next Maester version, which has packs.
 | `assets/banner.png` | The image the pack index shows when it features the pack |
 | `assets/insights-report.html` | The page of MP.DEMO.1008's report, with sample data so you can open it in a browser |
 | `assets/chart.js/` | Chart.js 4.5.1 and its MIT licence, put inline in the report |
-| `docs/report-ideas.md` | An optional guide: what a pack's report can show, and which chart library to use |
+| `docs/report-ideas.md` | An optional guide: what a pack's report can show, and which chart library to use. A pack does not need a report |
 | `tools/` | `Initialize-MtPackFromDemo`, which turns a copy into your own pack; delete the folder afterwards. The pack never loads it |
